@@ -125,7 +125,6 @@ def get_spotify_data(n_clicks, rel):
         BASE_URL = 'https://api.spotify.com/v1/'
         res = requests.get(BASE_URL + f'search?q={rel}&type=playlist', headers=headers)
         data = res.json()
-        print(data)
         items = data['playlists']['items']
         cards = []
         for i, item in enumerate(items):
