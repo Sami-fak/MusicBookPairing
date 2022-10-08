@@ -56,17 +56,18 @@ app.layout = html.Div([
 
     html.Section([
         dbc.Row([
+            dbc.Input(id="input", placeholder="What book are you reading today?", type="text"),
+        ], className='row mb-3'),
+        dbc.Row([
             dbc.Col([
-                dbc.Input(id="input", placeholder="What book are you reading today?", type="text"),
-                html.Br(),
                 html.P(id="output"),
             ]),
             dbc.Col([
                 html.P(id="spotify-output"),
             ])
-        ], className="col-lg-6 col-md-6 col-sm-6 col-xs-12"),
+        ], className="col-lg-12 col-md-12 col-sm-12 col-xs-12"),
     ], className='justify-content-center'),
-])
+], className='container')
 
 @app.callback(
     dependencies.Output('output', 'children'), 
@@ -90,7 +91,7 @@ def get_google_book_data(value):
             if "categories" in info.keys():
                 categories = ' '.join(info['categories'])
             else:
-                categories = "not found"
+                categories = title
             if "imageLinks" in info.keys():
                 thumbnail = info['imageLinks']['thumbnail']
             else:
@@ -124,7 +125,31 @@ def get_spotify_data(n_clicks, rel):
         BASE_URL = 'https://api.spotify.com/v1/'
         res = requests.get(BASE_URL + f'search?q={rel}&type=playlist', headers=headers)
         data = res.json()
-        return f"{data=}"
+        print(data)
+        items = data['playlists']['items']
+        cards = []
+        for i, item in enumerate(items):
+            description = item['description']
+            name = item['name']
+            image = item['images'][0]['url']
+            url = item['external_urls']['spotify']
+            card = dbc.Card([
+                dbc.CardBody([
+                    dbc.Row([
+                        dbc.Col([
+                            html.H2(name),
+                            html.A([
+                                html.Img(src=image, width=128, height=128, className="mx-auto d-block"),
+                            ], href=url, target="_blank"),
+                            html.P(f"Description : {description}"),
+                        ])
+                    ])
+                ])
+            ])
+            cards.append(card)
+
+        print(cards)
+        return cards[0]
 
 if __name__=='__main__':
     server.run(debug=True,port=8050)
