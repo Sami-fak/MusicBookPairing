@@ -3,13 +3,6 @@ from dash import Dash, html, dcc, dependencies
 import dash_bootstrap_components as dbc
 import spotipy as spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from pprint import pprint
-from time import sleep
-import os
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "backend_api/key.json"
-
-APIKEY="AIzaSyDVOS-1dHYqBAmAIimDFtXpxR-E6k7_ccM"
 
 #####################
 # SPOTIFY CONNECTION
@@ -18,6 +11,8 @@ APIKEY="AIzaSyDVOS-1dHYqBAmAIimDFtXpxR-E6k7_ccM"
 CLIENT_ID = "a08742993525464baccf9c36dd7d5b94"
 with open("key.txt", "r") as f:
     CLIENT_SECRET = f.readline().strip()
+    # GOOGLE BOOK API KEY
+    APIKEY = f.readline().strip()
 
 
 AUTH_URL = "https://accounts.spotify.com/api/token"
@@ -81,7 +76,6 @@ def get_google_book_data(value):
         url = f"https://www.googleapis.com/books/v1/volumes?q={value}&key={APIKEY}"
         res = requests.get(url)
         data = res.json()
-        print(data)
         items = data['items']
         cards = []
         for i,item in enumerate(items[:1]):
